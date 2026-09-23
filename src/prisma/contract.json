@@ -4,6 +4,14 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
+    "comment": {
+      "model": "Comment",
+      "namespace": "public"
+    },
+    "label": {
+      "model": "Label",
+      "namespace": "public"
+    },
     "organization": {
       "model": "Organization",
       "namespace": "public"
@@ -20,6 +28,10 @@
       "model": "Task",
       "namespace": "public"
     },
+    "taskLabel": {
+      "model": "TaskLabel",
+      "namespace": "public"
+    },
     "taskStatus": {
       "model": "TaskStatus",
       "namespace": "public"
@@ -33,6 +45,203 @@
     "namespaces": {
       "public": {
         "models": {
+          "Comment": {
+            "fields": {
+              "content": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdByUserId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "taskId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "createdByUser": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "createdByUserId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "task": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "taskId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Task",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "content": {
+                  "column": "content"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "createdByUserId": {
+                  "column": "createdByUserId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "taskId": {
+                  "column": "taskId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "comment"
+            }
+          },
+          "Label": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "projectId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "project": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "projectId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Project",
+                  "namespace": "public"
+                }
+              },
+              "tasks": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "labelId"
+                  ]
+                },
+                "to": {
+                  "model": "TaskLabel",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "projectId": {
+                  "column": "projectId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "label"
+            }
+          },
           "Organization": {
             "fields": {
               "createdAt": {
@@ -258,6 +467,21 @@
                   "namespace": "public"
                 }
               },
+              "labels": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "projectId"
+                  ]
+                },
+                "to": {
+                  "model": "Label",
+                  "namespace": "public"
+                }
+              },
               "organization": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -416,6 +640,21 @@
                   "namespace": "public"
                 }
               },
+              "comments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "taskId"
+                  ]
+                },
+                "to": {
+                  "model": "Comment",
+                  "namespace": "public"
+                }
+              },
               "createdByUser": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -429,6 +668,21 @@
                 },
                 "to": {
                   "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "labels": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "taskId"
+                  ]
+                },
+                "to": {
+                  "model": "TaskLabel",
                   "namespace": "public"
                 }
               },
@@ -497,6 +751,70 @@
               },
               "namespaceId": "public",
               "table": "task"
+            }
+          },
+          "TaskLabel": {
+            "fields": {
+              "labelId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "taskId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "label": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "labelId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Label",
+                  "namespace": "public"
+                }
+              },
+              "task": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "taskId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Task",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "labelId": {
+                  "column": "labelId"
+                },
+                "taskId": {
+                  "column": "taskId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "taskLabel"
             }
           },
           "TaskStatus": {
@@ -636,6 +954,21 @@
                   "namespace": "public"
                 }
               },
+              "createdComments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "createdByUserId"
+                  ]
+                },
+                "to": {
+                  "model": "Comment",
+                  "namespace": "public"
+                }
+              },
               "createdProjects": {
                 "cardinality": "1:N",
                 "on": {
@@ -713,6 +1046,184 @@
       "public": {
         "entries": {
           "table": {
+            "comment": {
+              "columns": {
+                "content": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "createdByUserId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "taskId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "taskId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "comment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "task"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "createdByUserId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "comment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "createdByUserId"
+                  ],
+                  "name": "comment_createdByUserId_idx_93e8a540",
+                  "prefix": "comment_createdByUserId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "taskId"
+                  ],
+                  "name": "comment_taskId_idx_4965c936",
+                  "prefix": "comment_taskId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "label": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "projectId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "projectId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "label"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "project"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "projectId"
+                  ],
+                  "name": "label_projectId_idx_a96e4d92",
+                  "prefix": "label_projectId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "projectId",
+                    "name"
+                  ]
+                }
+              ]
+            },
             "organization": {
               "columns": {
                 "createdAt": {
@@ -1109,6 +1620,79 @@
               },
               "uniques": []
             },
+            "taskLabel": {
+              "columns": {
+                "labelId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "taskId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "taskId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "taskLabel"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "task"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "labelId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "taskLabel"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "label"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "labelId"
+                  ],
+                  "name": "taskLabel_labelId_idx_e2585939",
+                  "prefix": "taskLabel_labelId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "taskId"
+                  ],
+                  "name": "taskLabel_taskId_idx_4965c936",
+                  "prefix": "taskLabel_taskId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "taskId",
+                  "labelId"
+                ]
+              },
+              "uniques": []
+            },
             "taskStatus": {
               "columns": {
                 "id": {
@@ -1235,12 +1819,42 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "30a5d336362aa56c3dcbcc7899de20823ee5b64857eeff1b27ee89fa6bc4494a"
+    "storageHash": "421cc6c1e8d69cfc43283c2326d35a183e9526bab1e5c3ec92b5ca53199b62df"
   },
   "execution": {
-    "executionHash": "c144311139c0ef8c5e3b851f86351ba38390e77613756b95a97f31d436a17c4a",
+    "executionHash": "4ebf17fd6e8257d6aa51a94733b0ff004bc997cc09b3c5f587c4c6b7dbb7083c",
     "mutations": {
       "defaults": [
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "comment"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "label"
+          }
+        },
         {
           "onCreate": {
             "id": "timestampNow",

@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'421cc6c1e8d69cfc43283c2326d35a183e9526bab1e5c3ec92b5ca53199b62df'>;
+  StorageHashBase<'9a92df0cbb991f183babc9d6b9d1d4e8bad5a81295f87e851363340f966f5524'>;
 export type ExecutionHash =
-  ExecutionHashBase<'4ebf17fd6e8257d6aa51a94733b0ff004bc997cc09b3c5f587c4c6b7dbb7083c'>;
+  ExecutionHashBase<'8349d751d31db1b6c914cc5b8a6e3254362a59195084f93a9cdecc1139b0af12'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -250,13 +250,6 @@ export type FieldOutputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
-    readonly Label: {
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly name: CodecTypes['pg/text@1']['output'];
-      readonly projectId: CodecTypes['pg/int4@1']['output'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
     readonly Organization: {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -287,10 +280,6 @@ export type FieldOutputTypes = {
       readonly statusId: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
-    readonly TaskLabel: {
-      readonly taskId: CodecTypes['pg/int4@1']['output'];
-      readonly labelId: CodecTypes['pg/int4@1']['output'];
     };
     readonly TaskStatus: {
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -317,13 +306,6 @@ export type FieldInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
-    readonly Label: {
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly name: CodecTypes['pg/text@1']['input'];
-      readonly projectId: CodecTypes['pg/int4@1']['input'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-    };
     readonly Organization: {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
@@ -355,10 +337,6 @@ export type FieldInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
-    readonly TaskLabel: {
-      readonly taskId: CodecTypes['pg/int4@1']['input'];
-      readonly labelId: CodecTypes['pg/int4@1']['input'];
-    };
     readonly TaskStatus: {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
@@ -382,13 +360,6 @@ export type StorageColumnTypes = {
       readonly createdByUserId: CodecTypes['pg/int4@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly taskId: CodecTypes['pg/int4@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
-    readonly label: {
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly name: CodecTypes['pg/text@1']['output'];
-      readonly projectId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly organization: {
@@ -422,10 +393,6 @@ export type StorageColumnTypes = {
       readonly title: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
-    readonly taskLabel: {
-      readonly labelId: CodecTypes['pg/int4@1']['output'];
-      readonly taskId: CodecTypes['pg/int4@1']['output'];
-    };
     readonly taskStatus: {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -449,13 +416,6 @@ export type StorageColumnInputTypes = {
       readonly createdByUserId: CodecTypes['pg/int4@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly taskId: CodecTypes['pg/int4@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-    };
-    readonly label: {
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly name: CodecTypes['pg/text@1']['input'];
-      readonly projectId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly organization: {
@@ -488,10 +448,6 @@ export type StorageColumnInputTypes = {
       readonly statusId: CodecTypes['pg/int4@1']['input'];
       readonly title: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-    };
-    readonly taskLabel: {
-      readonly labelId: CodecTypes['pg/int4@1']['input'];
-      readonly taskId: CodecTypes['pg/int4@1']['input'];
     };
     readonly taskStatus: {
       readonly id: CodecTypes['pg/int4@1']['input'];
@@ -550,12 +506,10 @@ export namespace Models {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     createdByUser: public_User;
-    labels: public_Label[];
     organization: public_Organization;
     taskStatuses: public_TaskStatus[];
     tasks: public_Task[];
-    readonly [RelationKeys]?:
-      'createdByUser' | 'labels' | 'organization' | 'taskStatuses' | 'tasks';
+    readonly [RelationKeys]?: 'createdByUser' | 'organization' | 'taskStatuses' | 'tasks';
   };
   export type public_Task = {
     id: CodecTypes['pg/int4@1']['output'];
@@ -570,11 +524,10 @@ export namespace Models {
     assignedToUser: public_User | null;
     comments: public_Comment[];
     createdByUser: public_User;
-    labels: public_TaskLabel[];
     project: public_Project;
     status: public_TaskStatus;
     readonly [RelationKeys]?:
-      'assignedToUser' | 'comments' | 'createdByUser' | 'labels' | 'project' | 'status';
+      'assignedToUser' | 'comments' | 'createdByUser' | 'project' | 'status';
   };
   export type public_TaskStatus = {
     id: CodecTypes['pg/int4@1']['output'];
@@ -596,23 +549,6 @@ export namespace Models {
     task: public_Task;
     readonly [RelationKeys]?: 'createdByUser' | 'task';
   };
-  export type public_Label = {
-    id: CodecTypes['pg/int4@1']['output'];
-    name: CodecTypes['pg/text@1']['output'];
-    projectId: CodecTypes['pg/int4@1']['output'];
-    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    project: public_Project;
-    tasks: public_TaskLabel[];
-    readonly [RelationKeys]?: 'project' | 'tasks';
-  };
-  export type public_TaskLabel = {
-    taskId: CodecTypes['pg/int4@1']['output'];
-    labelId: CodecTypes['pg/int4@1']['output'];
-    label: public_Label;
-    task: public_Task;
-    readonly [RelationKeys]?: 'label' | 'task';
-  };
 }
 
 export declare const models: {
@@ -624,8 +560,6 @@ export declare const models: {
     Task: Models.public_Task;
     TaskStatus: Models.public_TaskStatus;
     Comment: Models.public_Comment;
-    Label: Models.public_Label;
-    TaskLabel: Models.public_TaskLabel;
   };
 };
 
@@ -723,64 +657,6 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'user';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
-            readonly label: {
-              columns: {
-                readonly id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                };
-                readonly name: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly projectId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly createdAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
-                };
-                readonly updatedAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['projectId', 'name'] }];
-              indexes: readonly [
-                {
-                  readonly name: 'label_projectId_idx_a96e4d92';
-                  readonly prefix: 'label_projectId_idx';
-                  readonly columns: readonly ['projectId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'label';
-                    readonly columns: readonly ['projectId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'project';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -1102,62 +978,6 @@ type ContractBase = Omit<
                 },
               ];
             };
-            readonly taskLabel: {
-              columns: {
-                readonly taskId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly labelId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['taskId', 'labelId'] };
-              uniques: readonly [];
-              indexes: readonly [
-                {
-                  readonly name: 'taskLabel_taskId_idx_4965c936';
-                  readonly prefix: 'taskLabel_taskId_idx';
-                  readonly columns: readonly ['taskId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'taskLabel_labelId_idx_e2585939';
-                  readonly prefix: 'taskLabel_labelId_idx';
-                  readonly columns: readonly ['labelId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'taskLabel';
-                    readonly columns: readonly ['taskId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'task';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'taskLabel';
-                    readonly columns: readonly ['labelId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'label';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
             readonly taskStatus: {
               columns: {
                 readonly id: {
@@ -1275,8 +1095,6 @@ type ContractBase = Omit<
       readonly model: 'TaskStatus';
     };
     readonly comment: { readonly namespace: 'public' & NamespaceId; readonly model: 'Comment' };
-    readonly label: { readonly namespace: 'public' & NamespaceId; readonly model: 'Label' };
-    readonly taskLabel: { readonly namespace: 'public' & NamespaceId; readonly model: 'TaskLabel' };
   };
   readonly domain: {
     readonly namespaces: {
@@ -1343,72 +1161,6 @@ type ContractBase = Omit<
                 readonly content: { readonly column: 'content' };
                 readonly taskId: { readonly column: 'taskId' };
                 readonly createdByUserId: { readonly column: 'createdByUserId' };
-                readonly createdAt: { readonly column: 'createdAt' };
-                readonly updatedAt: { readonly column: 'updatedAt' };
-              };
-            };
-          };
-          readonly Label: {
-            readonly fields: {
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly name: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly projectId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly createdAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly updatedAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-            };
-            readonly relations: {
-              readonly project: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Project';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['projectId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly tasks: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'TaskLabel';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['labelId'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'label';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly id: { readonly column: 'id' };
-                readonly name: { readonly column: 'name' };
-                readonly projectId: { readonly column: 'projectId' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
@@ -1569,17 +1321,6 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['id'];
                 };
               };
-              readonly labels: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Label';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['projectId'];
-                };
-              };
               readonly organization: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -1701,17 +1442,6 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['id'];
                 };
               };
-              readonly labels: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'TaskLabel';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['taskId'];
-                };
-              };
               readonly project: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -1750,49 +1480,6 @@ type ContractBase = Omit<
                 readonly statusId: { readonly column: 'statusId' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
-              };
-            };
-          };
-          readonly TaskLabel: {
-            readonly fields: {
-              readonly taskId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly labelId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-            };
-            readonly relations: {
-              readonly label: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Label';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['labelId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly task: {
-                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Task' };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['taskId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'taskLabel';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly taskId: { readonly column: 'taskId' };
-                readonly labelId: { readonly column: 'labelId' };
               };
             };
           };
@@ -1971,15 +1658,6 @@ type ContractBase = Omit<
           readonly ref: {
             readonly namespace: 'public';
             readonly table: 'comment';
-            readonly column: 'updatedAt';
-          };
-          readonly onCreate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
-          readonly onUpdate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
-        },
-        {
-          readonly ref: {
-            readonly namespace: 'public';
-            readonly table: 'label';
             readonly column: 'updatedAt';
           };
           readonly onCreate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
