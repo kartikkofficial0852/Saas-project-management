@@ -1,0 +1,89 @@
+// use prisma-8
+// Contract inferred from the live database schema. Edit as needed, then run `prisma contract emit`.
+
+model User {
+  id             Int          @id @default(autoincrement())
+  name           String
+  email          String       @unique
+  createdAt      TimestamptzString  @default(now())
+  updatedAt      temporal.updatedAtString()
+
+  memberships OrganizationMember[]
+  createdProjects Project[]
+
+  createdTasks Task[] @relation("TaskCreator")
+  assignedTasks Task[] @relation("TaskAssignee")
+}
+
+model Organization {
+  id        Int        @id @default(autoincrement())
+  name      String
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+  memberships OrganizationMember[]
+
+  projects Project[]
+}
+
+model OrganizationMember{
+  id Int @id @default(autoincrement())
+
+  userId Int
+  organizationId Int
+
+  user User @relation(fields:[userId], references:[id])
+  organization Organization @relation(fields:[organizationId], references:[id])
+
+  @@unique([userId, organizationId]) // The pair should be unique means a user can't be repeat in same organization
+  @@map("organization_member")
+}
+
+model Project{
+  id Int @id @default(autoincrement())
+  name String
+  description String?
+  organizationId Int
+  createdByUserId Int
+  tasks Task[]
+  taskStatuses TaskStatus[]
+
+  createdByUser User @relation(fields:[createdByUserId],references:[id])
+  organization Organization @relation(fields:[organizationId], references:[id])
+
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+}
+
+model Task{
+  id Int @id @default(autoincrement())
+  title String 
+  description String?
+  
+  projectId Int
+  project Project @relation(fields:[projectId], references:[id])
+
+  createdByUserId Int
+  createdByUser User @relation("TaskCreator",fields:[createdByUserId], references:[id])
+
+  assignedToUserId Int?
+  assignedToUser User? @relation("TaskAssignee",fields:[assignedToUserId], references:[id])
+
+  statusId Int
+  status TaskStatus @relation(fields:[statusId], references:[id])
+
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+}
+
+model TaskStatus {
+  id        Int    @id @default(autoincrement())
+  name      String
+  position  Int
+
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id])
+
+  tasks     Task[]
+
+  @@unique([projectId, name])
+}
