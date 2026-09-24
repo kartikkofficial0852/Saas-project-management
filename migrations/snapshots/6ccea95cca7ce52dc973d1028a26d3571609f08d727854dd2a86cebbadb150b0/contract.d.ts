@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'9c12563024fc500b721792b1246e33aecbb96ec792bad27fc21bf60cf114294e'>;
+  StorageHashBase<'6ccea95cca7ce52dc973d1028a26d3571609f08d727854dd2a86cebbadb150b0'>;
 export type ExecutionHash =
-  ExecutionHashBase<'3dab21a32101d0650d19c99fc52d3ab0920bf8c3ace7a2f5289eb50c5b511d91'>;
+  ExecutionHashBase<'fc9679ace2c3c2ba773bf749bc47b9f59997222f67623c51c4f9791a0921c2b7'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -278,18 +278,6 @@ export type FieldOutputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
-    readonly Notification: {
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly type: CodecTypes['pg/text@1']['output'];
-      readonly message: CodecTypes['pg/text@1']['output'];
-      readonly isRead: CodecTypes['pg/bool@1']['output'];
-      readonly entityType: CodecTypes['pg/text@1']['output'];
-      readonly entityId: CodecTypes['pg/int4@1']['output'];
-      readonly metadata: CodecTypes['pg/json@1']['output'] | null;
-      readonly userId: CodecTypes['pg/int4@1']['output'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
     readonly Organization: {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -375,18 +363,6 @@ export type FieldInputTypes = {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly projectId: CodecTypes['pg/int4@1']['input'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-    };
-    readonly Notification: {
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly type: CodecTypes['pg/text@1']['input'];
-      readonly message: CodecTypes['pg/text@1']['input'];
-      readonly isRead: CodecTypes['pg/bool@1']['input'];
-      readonly entityType: CodecTypes['pg/text@1']['input'];
-      readonly entityId: CodecTypes['pg/int4@1']['input'];
-      readonly metadata: CodecTypes['pg/json@1']['input'] | null;
-      readonly userId: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -478,18 +454,6 @@ export type StorageColumnTypes = {
       readonly projectId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
-    readonly notification: {
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly entityId: CodecTypes['pg/int4@1']['output'];
-      readonly entityType: CodecTypes['pg/text@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly isRead: CodecTypes['pg/bool@1']['output'];
-      readonly message: CodecTypes['pg/text@1']['output'];
-      readonly metadata: CodecTypes['pg/json@1']['output'] | null;
-      readonly type: CodecTypes['pg/text@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly userId: CodecTypes['pg/int4@1']['output'];
-    };
     readonly organization: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -578,18 +542,6 @@ export type StorageColumnInputTypes = {
       readonly projectId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
-    readonly notification: {
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly entityId: CodecTypes['pg/int4@1']['input'];
-      readonly entityType: CodecTypes['pg/text@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly isRead: CodecTypes['pg/bool@1']['input'];
-      readonly message: CodecTypes['pg/text@1']['input'];
-      readonly metadata: CodecTypes['pg/json@1']['input'] | null;
-      readonly type: CodecTypes['pg/text@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly userId: CodecTypes['pg/int4@1']['input'];
-    };
     readonly organization: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
@@ -655,7 +607,6 @@ export namespace Models {
     createdProjects: public_Project[];
     createdTasks: public_Task[];
     memberships: public_OrganizationMember[];
-    notifications: public_Notification[];
     readonly [RelationKeys]?:
       | 'assignedTasks'
       | 'createdAttachments'
@@ -663,8 +614,7 @@ export namespace Models {
       | 'createdComments'
       | 'createdProjects'
       | 'createdTasks'
-      | 'memberships'
-      | 'notifications';
+      | 'memberships';
   };
   export type public_Organization = {
     id: CodecTypes['pg/int4@1']['output'];
@@ -790,20 +740,6 @@ export namespace Models {
     project: public_Project;
     readonly [RelationKeys]?: 'createdByUser' | 'project';
   };
-  export type public_Notification = {
-    id: CodecTypes['pg/int4@1']['output'];
-    type: CodecTypes['pg/text@1']['output'];
-    message: CodecTypes['pg/text@1']['output'];
-    isRead: CodecTypes['pg/bool@1']['output'];
-    entityType: CodecTypes['pg/text@1']['output'];
-    entityId: CodecTypes['pg/int4@1']['output'];
-    metadata: CodecTypes['pg/json@1']['output'] | null;
-    userId: CodecTypes['pg/int4@1']['output'];
-    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    user: public_User;
-    readonly [RelationKeys]?: 'user';
-  };
 }
 
 export declare const models: {
@@ -819,7 +755,6 @@ export declare const models: {
     TaskLabel: Models.public_TaskLabel;
     Attachment: Models.public_Attachment;
     AuditLog: Models.public_AuditLog;
-    Notification: Models.public_Notification;
   };
 };
 
@@ -1174,99 +1109,6 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'project';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
-            readonly notification: {
-              columns: {
-                readonly id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                };
-                readonly type: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly message: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly isRead: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
-                  };
-                };
-                readonly entityType: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly entityId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly metadata: {
-                  readonly nativeType: 'json';
-                  readonly codecId: 'pg/json@1';
-                  readonly nullable: true;
-                };
-                readonly userId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly createdAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
-                };
-                readonly updatedAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [];
-              indexes: readonly [
-                {
-                  readonly name: 'notification_userId_isRead_createdAt_idx_33778255';
-                  readonly prefix: 'notification_userId_isRead_createdAt_idx';
-                  readonly columns: readonly ['userId', 'isRead', 'createdAt'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'notification_userId_idx_a489d58a';
-                  readonly prefix: 'notification_userId_idx';
-                  readonly columns: readonly ['userId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'notification';
-                    readonly columns: readonly ['userId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'user';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -1768,10 +1610,6 @@ type ContractBase = Omit<
       readonly model: 'Attachment';
     };
     readonly auditLog: { readonly namespace: 'public' & NamespaceId; readonly model: 'AuditLog' };
-    readonly notification: {
-      readonly namespace: 'public' & NamespaceId;
-      readonly model: 'Notification';
-    };
   };
   readonly domain: {
     readonly namespaces: {
@@ -2061,83 +1899,6 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
                 readonly projectId: { readonly column: 'projectId' };
-                readonly createdAt: { readonly column: 'createdAt' };
-                readonly updatedAt: { readonly column: 'updatedAt' };
-              };
-            };
-          };
-          readonly Notification: {
-            readonly fields: {
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly type: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly message: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly isRead: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
-              readonly entityType: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly entityId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly metadata: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
-              };
-              readonly userId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly createdAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly updatedAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-            };
-            readonly relations: {
-              readonly user: {
-                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['userId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'notification';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly id: { readonly column: 'id' };
-                readonly type: { readonly column: 'type' };
-                readonly message: { readonly column: 'message' };
-                readonly isRead: { readonly column: 'isRead' };
-                readonly entityType: { readonly column: 'entityType' };
-                readonly entityId: { readonly column: 'entityId' };
-                readonly metadata: { readonly column: 'metadata' };
-                readonly userId: { readonly column: 'userId' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
@@ -2700,17 +2461,6 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['userId'];
                 };
               };
-              readonly notifications: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Notification';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['userId'];
-                };
-              };
             };
             readonly storage: {
               readonly table: 'user';
@@ -2773,15 +2523,6 @@ type ContractBase = Omit<
           readonly ref: {
             readonly namespace: 'public';
             readonly table: 'label';
-            readonly column: 'updatedAt';
-          };
-          readonly onCreate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
-          readonly onUpdate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
-        },
-        {
-          readonly ref: {
-            readonly namespace: 'public';
-            readonly table: 'notification';
             readonly column: 'updatedAt';
           };
           readonly onCreate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
