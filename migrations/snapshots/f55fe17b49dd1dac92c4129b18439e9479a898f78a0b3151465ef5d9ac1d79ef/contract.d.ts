@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'911211d5fb987cd641c9fb81dd0500166f64478a24c3ab44dd817a9fb9306c45'>;
+  StorageHashBase<'f55fe17b49dd1dac92c4129b18439e9479a898f78a0b3151465ef5d9ac1d79ef'>;
 export type ExecutionHash =
   ExecutionHashBase<'3dab21a32101d0650d19c99fc52d3ab0920bf8c3ace7a2f5289eb50c5b511d91'>;
 export type ProfileHash =
@@ -300,7 +300,6 @@ export type FieldOutputTypes = {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly userId: CodecTypes['pg/int4@1']['output'];
       readonly organizationId: CodecTypes['pg/int4@1']['output'];
-      readonly role: CodecTypes['pg/text@1']['output'];
     };
     readonly Project: {
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -402,7 +401,6 @@ export type FieldInputTypes = {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly userId: CodecTypes['pg/int4@1']['input'];
       readonly organizationId: CodecTypes['pg/int4@1']['input'];
-      readonly role: CodecTypes['pg/text@1']['input'];
     };
     readonly Project: {
       readonly id: CodecTypes['pg/int4@1']['input'];
@@ -503,7 +501,6 @@ export type StorageColumnTypes = {
     readonly organization_member: {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly organizationId: CodecTypes['pg/int4@1']['output'];
-      readonly role: CodecTypes['pg/text@1']['output'];
       readonly userId: CodecTypes['pg/int4@1']['output'];
     };
     readonly project: {
@@ -605,7 +602,6 @@ export type StorageColumnInputTypes = {
     readonly organization_member: {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly organizationId: CodecTypes['pg/int4@1']['input'];
-      readonly role: CodecTypes['pg/text@1']['input'];
       readonly userId: CodecTypes['pg/int4@1']['input'];
     };
     readonly project: {
@@ -688,7 +684,6 @@ export namespace Models {
     id: CodecTypes['pg/int4@1']['output'];
     userId: CodecTypes['pg/int4@1']['output'];
     organizationId: CodecTypes['pg/int4@1']['output'];
-    role: CodecTypes['pg/text@1']['output'];
     organization: public_Organization;
     user: public_User;
     readonly [RelationKeys]?: 'organization' | 'user';
@@ -1335,15 +1330,6 @@ type ContractBase = Omit<
                   readonly nativeType: 'int4';
                   readonly codecId: 'pg/int4@1';
                   readonly nullable: false;
-                };
-                readonly role: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/text@1', 'Member'>;
-                  };
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
@@ -2241,10 +2227,6 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
-              readonly role: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
             };
             readonly relations: {
               readonly organization: {
@@ -2276,7 +2258,6 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly userId: { readonly column: 'userId' };
                 readonly organizationId: { readonly column: 'organizationId' };
-                readonly role: { readonly column: 'role' };
               };
             };
           };

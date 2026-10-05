@@ -738,6 +738,13 @@
                   "kind": "scalar"
                 }
               },
+              "role": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "userId": {
                 "nullable": false,
                 "type": {
@@ -787,6 +794,9 @@
                 },
                 "organizationId": {
                   "column": "organizationId"
+                },
+                "role": {
+                  "column": "role"
                 },
                 "userId": {
                   "column": "userId"
@@ -1358,6 +1368,13 @@
                   "kind": "scalar"
                 }
               },
+              "passwordHash": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "updatedAt": {
                 "nullable": false,
                 "type": {
@@ -1501,6 +1518,9 @@
                 },
                 "name": {
                   "column": "name"
+                },
+                "passwordHash": {
+                  "column": "passwordHash"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -2106,6 +2126,15 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
+                "role": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "Member"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
                 "userId": {
                   "codecId": "pg/int4@1",
                   "nativeType": "int4",
@@ -2618,6 +2647,11 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "passwordHash": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
@@ -2645,7 +2679,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "9c12563024fc500b721792b1246e33aecbb96ec792bad27fc21bf60cf114294e"
+    "storageHash": "911211d5fb987cd641c9fb81dd0500166f64478a24c3ab44dd817a9fb9306c45"
   },
   "execution": {
     "executionHash": "3dab21a32101d0650d19c99fc52d3ab0920bf8c3ace7a2f5289eb50c5b511d91",

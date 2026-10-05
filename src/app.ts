@@ -1,5 +1,6 @@
 import express from "express";
-
+import errorMiddleware from "./middleware/error.middleware";
+import routes from './routes/index';
 const app = express();
 
 app.use(express.json());
@@ -9,5 +10,9 @@ app.get('/', (req, res) => {
         message: "Saas API is running"
     });
 });
+
+app.use('/api', routes)
+
+app.use(errorMiddleware)
 
 export default app;

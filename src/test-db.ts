@@ -1,4 +1,6 @@
+import redis from "./config/redis.js";
 import { db } from "./prisma/db.js";
+import cacheService from "./services/cache.service.js";
 
 // ------------------------------------------  create User ----------------------------------
 
@@ -260,47 +262,47 @@ import { db } from "./prisma/db.js";
 
 // -------------------------------------- Get Existing Project --------------------------------------
 
-const project = await db.orm.public.Project
-    .where({ id: 1 })
-    .first();
+// const project = await db.orm.public.Project
+//     .where({ id: 1 })
+//     .first();
 
-if (!project) {
-    throw new Error("Project not found!");
-}
-
-
-// -------------------------------------- Get Existing User --------------------------------------
-
-const user = await db.orm.public.User.first();
-
-if (!user) {
-    throw new Error("User not found!");
-}
+// if (!project) {
+//     throw new Error("Project not found!");
+// }
 
 
-// -------------------------------------- Get Existing Task --------------------------------------
+// // -------------------------------------- Get Existing User --------------------------------------
 
-const task = await db.orm.public.Task
-    .where({ title: "Implement Authentication" })
-    .first();
+// const user = await db.orm.public.User.first();
 
-if (!task) {
-    throw new Error("Task not found!");
-}
+// if (!user) {
+//     throw new Error("User not found!");
+// }
 
 
-// -------------------------------------- Get Existing Task Status --------------------------------------
+// // -------------------------------------- Get Existing Task --------------------------------------
 
-const todo = await db.orm.public.TaskStatus
-    .where({
-        projectId: project.id,
-        name: "Todo"
-    })
-    .first();
+// const task = await db.orm.public.Task
+//     .where({ title: "Implement Authentication" })
+//     .first();
 
-if (!todo) {
-    throw new Error("Todo status not found!");
-}
+// if (!task) {
+//     throw new Error("Task not found!");
+// }
+
+
+// // -------------------------------------- Get Existing Task Status --------------------------------------
+
+// const todo = await db.orm.public.TaskStatus
+//     .where({
+//         projectId: project.id,
+//         name: "Todo"
+//     })
+//     .first();
+
+// if (!todo) {
+//     throw new Error("Todo status not found!");
+// }
 
 
 // // -------------------------------------- Create Comment --------------------------------------
@@ -315,22 +317,22 @@ if (!todo) {
 
 // -------------------------------------- Get/Create Comment --------------------------------------
 
-let comment = await db.orm.public.Comment
-    .where({
-        taskId: task.id,
-        content: "Authentication implementation is in progress."
-    })
-    .first();
+// let comment = await db.orm.public.Comment
+//     .where({
+//         taskId: task.id,
+//         content: "Authentication implementation is in progress."
+//     })
+//     .first();
 
-if (!comment) {
-    comment = await db.orm.public.Comment.create({
-        content: "Authentication implementation is in progress.",
-        taskId: task.id,
-        createdByUserId: user.id
-    });
-}
+// if (!comment) {
+//     comment = await db.orm.public.Comment.create({
+//         content: "Authentication implementation is in progress.",
+//         taskId: task.id,
+//         createdByUserId: user.id
+//     });
+// }
 
-console.log("Comment:", comment);
+// console.log("Comment:", comment);
 
 
 // // -------------------------------------- Create Label --------------------------------------
@@ -354,47 +356,82 @@ console.log("Comment:", comment);
 
 // -------------------------------------- Get/Create Label --------------------------------------
 
-let label = await db.orm.public.Label
-    .where({
-        projectId: project.id,
-        name: "Backend"
-    })
-    .first();
+// let label = await db.orm.public.Label
+//     .where({
+//         projectId: project.id,
+//         name: "Backend"
+//     })
+//     .first();
 
-if (!label) {
-    label = await db.orm.public.Label.create({
-        name: "Backend",
-        projectId: project.id
-    });
-}
+// if (!label) {
+//     label = await db.orm.public.Label.create({
+//         name: "Backend",
+//         projectId: project.id
+//     });
+// }
 
-console.log("Label:", label);
+// console.log("Label:", label);
 
-// -------------------------------------- Get/Create Task Label --------------------------------------
+// // -------------------------------------- Get/Create Task Label --------------------------------------
 
-let taskLabel = await db.orm.public.TaskLabel
-    .where({
-        taskId: task.id,
-        labelId: label.id
-    })
-    .first();
+// let taskLabel = await db.orm.public.TaskLabel
+//     .where({
+//         taskId: task.id,
+//         labelId: label.id
+//     })
+//     .first();
 
-if (!taskLabel) {
-    taskLabel = await db.orm.public.TaskLabel.create({
-        taskId: task.id,
-        labelId: label.id
-    });
-}
+// if (!taskLabel) {
+//     taskLabel = await db.orm.public.TaskLabel.create({
+//         taskId: task.id,
+//         labelId: label.id
+//     });
+// }
 
-console.log("Task Label:", taskLabel);
+// console.log("Task Label:", taskLabel);
 
 
-// -------------------------------------- Fetch Task With Relations --------------------------------------
+// // -------------------------------------- Fetch Task With Relations --------------------------------------
 
-const taskDetails = await db.orm.public.Task
-    .where({ id: task.id })
-    .include("comments")
-    .include("labels", (taskLabel) => taskLabel.include("label"))
-    .first();
+// const taskDetails = await db.orm.public.Task
+//     .where({ id: task.id })
+//     .include("comments")
+//     .include("labels", (taskLabel) => taskLabel.include("label"))
+//     .first();
 
-console.dir(taskDetails, { depth: null });
+// console.dir(taskDetails, { depth: null });
+
+
+// ---------------------------------------------------- Check Redis connection -----------------------------------------------
+
+// await redis.set("test:key", "hello");
+
+// const value = await redis.get("test:key");
+
+// await redis.set("test:ttl", "hello", {
+//     EX: 10,
+// });
+
+
+// // console.log(value);
+
+// console.log(await redis.ttl("test:ttl"));
+
+// console.log(await redis.get("test:ttl"))
+
+
+// --------------------------------------------------- cache service test ---------------------------------------------------
+
+await cacheService.set(
+    "test:user",
+    {
+        name: "Kartik",
+        role: "developer",
+    },
+    60
+);
+
+const user = await cacheService.get("test:user");
+
+console.log(user);
+
