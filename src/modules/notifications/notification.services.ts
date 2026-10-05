@@ -1,7 +1,25 @@
+import { JsonValue } from "@prisma/orm-postgres/contract";
 import AppError from "../../errors/app-error.js";
 import { db } from "../../prisma/db.js";
 
 const notificationService = {
+    async create(
+        type: string,
+        message: string,
+        entityType: string,
+        entityId: number,
+        userId: number,
+        metadata?: JsonValue
+    ) {
+        return await db.orm.public.Notification.create({
+            type,
+            message,
+            entityType,
+            entityId,
+            userId,
+            metadata,
+        });
+    },
     async getAll(userId: number) {
         return await db.orm.public.Notification
             .where({ userId })

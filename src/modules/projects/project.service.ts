@@ -40,6 +40,14 @@ const projectService = {
                 });
             }
 
+            await tx.orm.public.AuditLog.create({
+                action: "PROJECT_CREATED",
+                entityType: "PROJECT",
+                entityId: project.id,
+                projectId: project.id,
+                createdByUserId: userId,
+            });
+
             return project;
         });
     },
@@ -80,7 +88,8 @@ const projectService = {
         data: {
             name?: string;
             description?: string | null;
-        }
+        },
+        userId: number
     ) {
         const project =
             await db.orm.public.Project
@@ -97,9 +106,28 @@ const projectService = {
             );
         }
 
-        return await db.orm.public.Project.where({ id: project.id }).update(
-            data
-        );
+        return await db.transaction(async (tx) => {
+            const updatedProject =
+                await tx.orm.public.Project.where({ id: project.id }).update(
+                    data
+                );
+
+            await tx.orm.public.AuditLog.create({
+                action: "PROJECT_UPDATED",
+                entityType: "PROJECT",
+                entityId: projectId,
+                metadata: {
+                    nameChanged: data.name !== undefined,
+                    descriptionChanged:
+                        data.description !== undefined,
+                },
+                projectId,
+                createdByUserId: userId,
+            });
+
+            return updatedProject;
+        })
+
     },
 
     async delete(

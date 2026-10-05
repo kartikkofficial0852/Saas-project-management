@@ -77,7 +77,8 @@ const projectController = {
             await projectService.update(
                 organizationId,
                 projectId,
-                req.body
+                req.body,
+                req.user!.id
             );
 
         sendResponse({

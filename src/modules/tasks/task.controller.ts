@@ -135,7 +135,8 @@ const taskController = {
             taskId,
             projectId,
             organizationId,
-            assignedToUserId
+            assignedToUserId,
+            req.user!.id
         );
 
         sendResponse({
@@ -159,7 +160,8 @@ const taskController = {
             taskId,
             projectId,
             organizationId,
-            statusId
+            statusId,
+            req.user!.id
         );
 
         sendResponse({

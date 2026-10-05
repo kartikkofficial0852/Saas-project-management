@@ -60,16 +60,41 @@ const taskService = {
         }
 
         // Create task
-        const task = await db.orm.public.Task.create({
-            title,
-            description,
-            projectId,
-            createdByUserId: userId,
-            statusId: finalStatusId,
-            assignedToUserId,
-        });
 
-        return task;
+
+        return await db.transaction(async (tx) => {
+            const task = await tx.orm.public.Task.create({
+                title,
+                description,
+                projectId,
+                createdByUserId: userId,
+                assignedToUserId,
+                statusId,
+            });
+
+            await tx.orm.public.AuditLog.create({
+                action: "TASK_CREATED",
+                entityType: "TASK",
+                entityId: task.id,
+                projectId,
+                createdByUserId: userId,
+            });
+
+            if (
+                assignedToUserId &&
+                assignedToUserId !== userId
+            ) {
+                await tx.orm.public.Notification.create({
+                    type: "TASK_ASSIGNED",
+                    message: `You have been assigned a task: ${task.title}`,
+                    entityType: "TASK",
+                    entityId: task.id,
+                    userId: assignedToUserId,
+                });
+            }
+
+            return task;
+        });
     },
 
     async getAll(
@@ -229,7 +254,8 @@ const taskService = {
         taskId: number,
         projectId: number,
         organizationId: number,
-        assignedToUserId: number | null
+        assignedToUserId: number | null,
+        userId: number
     ) {
         const project = await db.orm.public.Project
             .where({
@@ -270,8 +296,44 @@ const taskService = {
             }
         }
 
-        return await db.orm.public.Task.where({ id: taskId }).update({
-            assignedToUserId,
+        return await db.transaction(async (tx) => {
+            const updatedTask =
+                await tx.orm.public.Task.where({ id: taskId }).update({
+                    assignedToUserId,
+                });
+
+            await tx.orm.public.AuditLog.create({
+                action: "TASK_ASSIGNED",
+                entityType: "TASK",
+                entityId: taskId,
+                metadata: {
+                    previousAssigneeId:
+                        task.assignedToUserId,
+                    newAssigneeId:
+                        assignedToUserId,
+                },
+                projectId,
+                createdByUserId: userId,
+            });
+
+            if (
+                assignedToUserId &&
+                assignedToUserId !== userId &&
+                assignedToUserId !== task.assignedToUserId
+            ) {
+                await tx.orm.public.Notification.create({
+                    type: "TASK_ASSIGNED",
+                    message: `You have been assigned a task: ${task.title}`,
+                    entityType: "TASK",
+                    entityId: taskId,
+                    userId: assignedToUserId,
+                    metadata: {
+                        assignedByUserId: userId,
+                    },
+                });
+            }
+
+            return updatedTask;
         });
     },
 
@@ -280,7 +342,8 @@ const taskService = {
         taskId: number,
         projectId: number,
         organizationId: number,
-        statusId: number
+        statusId: number,
+        userId: number
     ) {
         const project = await db.orm.public.Project
             .where({
@@ -318,8 +381,32 @@ const taskService = {
             );
         }
 
-        return await db.orm.public.Task.where({ id: taskId }).update({
-            statusId,
+        if (task.statusId === statusId) {
+            throw new AppError(
+                "Task is already in this status",
+                400
+            );
+        }
+
+        return await db.transaction(async (tx) => {
+            const updatedTask =
+                await tx.orm.public.Task.where({ id: taskId }).update({
+                    statusId,
+                });
+
+            await tx.orm.public.AuditLog.create({
+                action: "TASK_STATUS_CHANGED",
+                entityType: "TASK",
+                entityId: taskId,
+                metadata: {
+                    previousStatusId: task.statusId,
+                    newStatusId: statusId,
+                },
+                projectId,
+                createdByUserId: userId,
+            });
+
+            return updatedTask;
         });
     },
 };

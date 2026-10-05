@@ -31,13 +31,27 @@ const commentService = {
             throw new AppError("Task not found", 404);
         }
 
-        const comment = await db.orm.public.Comment.create({
-            content,
-            taskId,
-            createdByUserId: userId,
-        });
+        return await db.transaction(async (tx) => {
+            const comment =
+                await tx.orm.public.Comment.create({
+                    content,
+                    taskId,
+                    createdByUserId: userId,
+                });
 
-        return comment;
+            await tx.orm.public.AuditLog.create({
+                action: "COMMENT_CREATED",
+                entityType: "COMMENT",
+                entityId: comment.id,
+                metadata: {
+                    taskId,
+                },
+                projectId,
+                createdByUserId: userId,
+            });
+
+            return comment;
+        });
     },
 
     async getAll(
@@ -78,11 +92,11 @@ const commentService = {
 
     async update(
         commentId: number,
+        content: string,
         organizationId: number,
         projectId: number,
         taskId: number,
-        userId: number,
-        content: string
+        userId: number
     ) {
         const project = await db.orm.public.Project
             .where({
@@ -119,13 +133,29 @@ const commentService = {
 
         if (comment.createdByUserId !== userId) {
             throw new AppError(
-                "You can only update your own comment",
+                "You can only update your own comments",
                 403
             );
         }
 
-        return await db.orm.public.Comment.where({ id: commentId }).update({
-            content,
+        return await db.transaction(async (tx) => {
+            const updatedComment =
+                await tx.orm.public.Comment.where({ id: commentId }).update({
+                    content,
+                });
+
+            await tx.orm.public.AuditLog.create({
+                action: "COMMENT_UPDATED",
+                entityType: "COMMENT",
+                entityId: commentId,
+                metadata: {
+                    taskId,
+                },
+                projectId,
+                createdByUserId: userId,
+            });
+
+            return updatedComment;
         });
     },
 
@@ -171,12 +201,25 @@ const commentService = {
 
         if (comment.createdByUserId !== userId) {
             throw new AppError(
-                "You can only delete your own comment",
+                "You can only delete your own comments",
                 403
             );
         }
 
-        await db.orm.public.Comment.where({ id: commentId }).delete();
+        return await db.transaction(async (tx) => {
+            await tx.orm.public.Comment.where({ id: commentId }).delete();
+
+            await tx.orm.public.AuditLog.create({
+                action: "COMMENT_DELETED",
+                entityType: "COMMENT",
+                entityId: commentId,
+                metadata: {
+                    taskId,
+                },
+                projectId,
+                createdByUserId: userId,
+            });
+        });
     },
 };
 

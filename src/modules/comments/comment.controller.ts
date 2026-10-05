@@ -63,11 +63,11 @@ const commentController = {
 
         const comment = await commentService.update(
             commentId,
+            content,
             organizationId,
             projectId,
             taskId,
-            user.id,
-            content
+            user.id
         );
 
         sendResponse({

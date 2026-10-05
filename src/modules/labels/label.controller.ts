@@ -15,7 +15,8 @@ const labelController = {
         const label = await labelService.create(
             name,
             organizationId,
-            projectId
+            projectId,
+            req.user!.id
         );
 
         sendResponse({
@@ -66,7 +67,8 @@ const labelController = {
             labelId,
             name,
             organizationId,
-            projectId
+            projectId,
+            req.user!.id
         );
 
         sendResponse({
@@ -119,7 +121,8 @@ const labelController = {
                 labelId,
                 organizationId,
                 projectId,
-                taskId
+                taskId,
+                req.user!.id
             );
 
         sendResponse({
@@ -149,7 +152,8 @@ const labelController = {
             labelId,
             organizationId,
             projectId,
-            taskId
+            taskId,
+            req.user!.id
         );
 
         sendResponse({

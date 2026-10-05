@@ -5,7 +5,8 @@ const labelService = {
     async create(
         name: string,
         organizationId: number,
-        projectId: number
+        projectId: number,
+        userId: number
     ) {
         const project = await db.orm.public.Project
             .where({
@@ -32,9 +33,24 @@ const labelService = {
             );
         }
 
-        return await db.orm.public.Label.create({
-            name,
-            projectId,
+        return await db.transaction(async (tx) => {
+            const label = await tx.orm.public.Label.create({
+                name,
+                projectId,
+            });
+
+            await tx.orm.public.AuditLog.create({
+                action: "LABEL_CREATED",
+                entityType: "LABEL",
+                entityId: label.id,
+                metadata: {
+                    name: label.name,
+                },
+                projectId,
+                createdByUserId: userId,
+            });
+
+            return label;
         });
     },
 
@@ -64,7 +80,8 @@ const labelService = {
         labelId: number,
         name: string,
         organizationId: number,
-        projectId: number
+        projectId: number,
+        userId: number
     ) {
         const project = await db.orm.public.Project
             .where({
@@ -105,8 +122,25 @@ const labelService = {
             );
         }
 
-        return await db.orm.public.Label.where({ id: labelId }).update({
-            name,
+        return await db.transaction(async (tx) => {
+            const updatedLabel =
+                await tx.orm.public.Label.where({ id: labelId }).update({
+                    name,
+                });
+
+            await tx.orm.public.AuditLog.create({
+                action: "LABEL_UPDATED",
+                entityType: "LABEL",
+                entityId: labelId,
+                metadata: {
+                    previousName: label.name,
+                    newName: name,
+                },
+                projectId,
+                createdByUserId: userId,
+            });
+
+            return updatedLabel;
         });
     },
 
@@ -144,7 +178,8 @@ const labelService = {
         labelId: number,
         organizationId: number,
         projectId: number,
-        taskId: number
+        taskId: number,
+        userId: number
     ) {
         const project = await db.orm.public.Project
             .where({
@@ -194,9 +229,26 @@ const labelService = {
             );
         }
 
-        return await db.orm.public.TaskLabel.create({
-            taskId,
-            labelId,
+        return await db.transaction(async (tx) => {
+            const taskLabel =
+                await tx.orm.public.TaskLabel.create({
+                    taskId,
+                    labelId,
+                });
+
+            await tx.orm.public.AuditLog.create({
+                action: "LABEL_ATTACHED",
+                entityType: "TASK_LABEL",
+                entityId: taskId,
+                metadata: {
+                    labelId,
+                    taskId,
+                },
+                projectId,
+                createdByUserId: userId,
+            });
+
+            return taskLabel;
         });
     },
 
@@ -204,7 +256,8 @@ const labelService = {
         labelId: number,
         organizationId: number,
         projectId: number,
-        taskId: number
+        taskId: number,
+        userId: number
     ) {
         const project = await db.orm.public.Project
             .where({
@@ -243,7 +296,24 @@ const labelService = {
             );
         }
 
-        await db.orm.public.TaskLabel.where({ taskId, labelId }).delete();
+        await db.transaction(async (tx) => {
+
+            await tx.orm.public.TaskLabel.where({ taskId, labelId }).delete();
+
+            await tx.orm.public.AuditLog.create({
+                action: "LABEL_REMOVED",
+                entityType: "TASK_LABEL",
+                entityId: taskId,
+                metadata: {
+                    labelId,
+                    taskId,
+                },
+                projectId,
+                createdByUserId: userId,
+            });
+        })
+
+
     },
 };
 
