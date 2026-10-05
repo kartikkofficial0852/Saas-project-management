@@ -1436,15 +1436,15 @@ type ContractBase = Omit<
               uniques: readonly [];
               indexes: readonly [
                 {
-                  readonly name: 'project_createdByUserId_idx_93e8a540';
-                  readonly prefix: 'project_createdByUserId_idx';
-                  readonly columns: readonly ['createdByUserId'];
-                  readonly unique: false;
-                },
-                {
                   readonly name: 'project_organizationId_idx_2e17ef41';
                   readonly prefix: 'project_organizationId_idx';
                   readonly columns: readonly ['organizationId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'project_createdByUserId_idx_93e8a540';
+                  readonly prefix: 'project_createdByUserId_idx';
+                  readonly columns: readonly ['createdByUserId'];
                   readonly unique: false;
                 },
               ];

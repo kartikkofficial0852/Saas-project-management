@@ -19,6 +19,20 @@ const organizationMiddleware: RequestHandler = async (
         );
     }
 
+    const organization =
+        await db.orm.public.Organization
+            .where({
+                id: organizationId,
+            })
+            .first();
+
+    if (!organization) {
+        throw new AppError(
+            "Organization not found",
+            404
+        );
+    }
+
     const userId = req.user!.id;
 
     const membership =
