@@ -710,6 +710,6 @@ The goal is to build a complete SaaS product rather than a collection of isolate
 
 **Kartik K. Goyal**
 
-Full Stack Developer | Software Engineer | Actor
+Full Stack Developer | Software Engineer
 
 Built as a practical full-stack SaaS project to demonstrate backend engineering, system design, real-time collaboration, caching, and AI integration.
