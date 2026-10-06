@@ -442,4 +442,274 @@ Example:
 ```text
 User A assigns Task
        ↓
-Post
+PostgreSQL transaction
+       ↓
+Task updated
+       ↓
+Redis invalidation
+       ↓
+Socket.IO
+       ├── Project room → task.assigned
+       └── User room    → notification.created
+```
+
+This keeps persistence and real-time communication separate.
+
+---
+
+# 🤖 AI Architecture
+
+AI functionality is implemented as server-side services.
+
+```text
+Client
+  ↓
+AI API Route
+  ↓
+Controller
+  ↓
+AI Service
+  ↓
+LLM API
+  ↓
+Generated Result
+  ↓
+Client
+```
+
+The LLM API key never reaches the frontend.
+
+Current AI capabilities:
+
+```text
+Task → Description Generator
+Task → Subtask Breakdown
+Content → Summary
+```
+
+---
+
+# ⚙️ Environment Variables
+
+Create a `.env` file:
+
+```env
+PORT=5000
+
+DATABASE_URL=your_postgresql_connection_string
+
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=1d
+
+REDIS_URL=your_redis_connection_string
+
+OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=your_model_id
+```
+
+Never commit `.env` to source control.
+
+---
+
+# 🚀 Running Locally
+
+### 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd saas-project-management
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+
+Create `.env` and add the required configuration.
+
+### 4. Start PostgreSQL
+
+Create the application database and configure `DATABASE_URL`.
+
+### 5. Start Redis
+
+Make sure Redis is running locally.
+
+### 6. Generate Prisma contract
+
+```bash
+npx prisma contract emit
+```
+
+### 7. Start development server
+
+```bash
+npm run dev
+```
+
+The API will run on:
+
+```text
+http://localhost:5000
+```
+
+---
+
+# 📡 API Overview
+
+### Authentication
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+```
+
+### Organizations
+
+```text
+GET    /api/organizations/:organizationId/members
+POST   /api/organizations/:organizationId/members
+PATCH  /api/organizations/:organizationId/members/:userId
+DELETE /api/organizations/:organizationId/members/:userId
+```
+
+### Projects
+
+```text
+POST   /api/organizations/:organizationId/projects
+GET    /api/organizations/:organizationId/projects
+GET    /api/organizations/:organizationId/projects/:projectId
+PATCH  /api/organizations/:organizationId/projects/:projectId
+DELETE /api/organizations/:organizationId/projects/:projectId
+```
+
+### Tasks
+
+```text
+POST   /api/organizations/:organizationId/projects/:projectId/tasks
+GET    /api/organizations/:organizationId/projects/:projectId/tasks
+GET    /api/organizations/:organizationId/projects/:projectId/tasks/:taskId
+PATCH  /api/organizations/:organizationId/projects/:projectId/tasks/:taskId
+DELETE /api/organizations/:organizationId/projects/:projectId/tasks/:taskId
+```
+
+### AI
+
+```text
+POST /api/ai/task-description
+POST /api/ai/task-breakdown
+POST /api/ai/summarize
+```
+
+### Search
+
+```text
+GET /api/organizations/:organizationId/search?q=...
+```
+
+### Dashboard
+
+```text
+GET /api/organizations/:organizationId/dashboard
+```
+
+Additional endpoints are available for:
+
+- Comments
+- Labels
+- Attachments
+- Task statuses
+- Audit logs
+- Notifications
+
+---
+
+# 🧪 Testing
+
+API endpoints can be tested using tools such as Postman.
+
+Testing coverage will include:
+
+- Authentication
+- Authorization
+- Organization isolation
+- Project operations
+- Task operations
+- Notifications
+- Search
+- AI endpoints
+- Redis-backed flows
+- Real-time event behavior
+
+---
+
+# 📌 Current Project Status
+
+### Completed
+
+- [x] Authentication & JWT
+- [x] Organizations & memberships
+- [x] Role-based authorization
+- [x] Projects
+- [x] Tasks
+- [x] Task statuses
+- [x] Comments
+- [x] Labels
+- [x] Attachments
+- [x] Audit logs
+- [x] Notifications
+- [x] Redis caching
+- [x] Socket.IO real-time architecture
+- [x] Global search
+- [x] Organization dashboard
+- [x] AI task description generation
+- [x] AI task breakdown
+- [x] AI summarization
+
+### Next
+
+- [ ] RabbitMQ event-driven workflows
+- [ ] Automated backend tests
+- [ ] Production security hardening
+- [ ] React frontend
+- [ ] Docker
+- [ ] CI/CD
+- [ ] AWS deployment
+- [ ] Production monitoring
+
+---
+
+# 🎯 Project Goals
+
+This project demonstrates practical experience with:
+
+- Multi-tenant SaaS architecture
+- REST API design
+- Authentication and authorization
+- Relational database design
+- PostgreSQL
+- ORM usage
+- Redis caching and invalidation
+- Real-time communication
+- Event-driven architecture
+- AI/LLM integration
+- Input validation
+- Transactional operations
+- Tenant isolation
+- Backend modular architecture
+- Production-oriented system design
+
+The goal is to build a complete SaaS product rather than a collection of isolated CRUD APIs.
+
+---
+
+# 👨‍💻 Author
+
+**Kartik K. Goyal**
+
+Full Stack Developer | Software Engineer | Actor
+
+Built as a practical full-stack SaaS project to demonstrate backend engineering, system design, real-time collaboration, caching, and AI integration.
