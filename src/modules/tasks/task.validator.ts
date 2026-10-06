@@ -59,3 +59,15 @@ export const updateTaskStatusSchema = z.object({
         .int()
         .positive(),
 });
+
+export const getTasksQuerySchema = z.object({
+    search: z.string().trim().optional(),
+
+    statusId: z.coerce.number().int().positive().optional(),
+
+    assignedToUserId: z.coerce.number().int().positive().optional(),
+
+    page: z.coerce.number().int().positive().default(1),
+
+    limit: z.coerce.number().int().positive().max(100).default(10),
+});

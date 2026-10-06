@@ -19,6 +19,189 @@ model User {
   assignedTasks      Task[]                     @relation("TaskAssignee")
 }
 
+// model Organization {
+//   id          Int                        @id @default(autoincrement())
+//   name        String
+//   createdAt   TimestamptzString          @default(now())
+//   updatedAt   temporal.updatedAtString()
+//   memberships OrganizationMember[]
+
+//   projects    Project[]
+// }
+
+// model OrganizationMember {
+//   id             Int          @id @default(autoincrement())
+
+//   userId         Int
+//   organizationId Int
+
+//   user           User         @relation(fields:[userId], references:[id])
+//   organization   Organization @relation(fields:[organizationId], references:[id])
+//   role           String       @default("Member")
+
+//   @@unique([userId, organizationId]) // The pair should be unique means a user can't be repeat in same organization
+//   @@map("organization_member")
+// }
+
+// model Project {
+//   id              Int                        @id @default(autoincrement())
+//   name            String
+//   description     String?
+//   organizationId  Int
+//   createdByUserId Int
+//   tasks           Task[]
+//   taskStatuses    TaskStatus[]
+//   labels          Label[]
+//   auditLogs       AuditLog[]
+
+//   createdByUser   User                       @relation(fields:[createdByUserId], references:[id])
+//   organization    Organization               @relation(fields:[organizationId], references:[id])
+
+//   createdAt       TimestamptzString          @default(now())
+//   updatedAt       temporal.updatedAtString()
+
+//   @@index([organizationId])
+//   @@index([createdByUserId])
+// }
+
+// model Task {
+//   id               Int                        @id @default(autoincrement())
+//   title            String
+//   description      String?
+
+//   comments         Comment[]
+//   labels           TaskLabel[]
+//   attachments      Attachment[]
+
+//   projectId        Int
+//   project          Project                    @relation(fields:[projectId], references:[id], onDelete: Cascade)
+
+//   createdByUserId  Int
+//   createdByUser    User                       @relation("TaskCreator", fields:[createdByUserId], references:[id])
+
+//   assignedToUserId Int?
+//   assignedToUser   User?                      @relation("TaskAssignee", fields:[assignedToUserId], references:[id])
+
+//   statusId         Int
+//   status           TaskStatus                 @relation(fields:[statusId], references:[id])
+
+//   createdAt        TimestamptzString          @default(now())
+//   updatedAt        temporal.updatedAtString()
+// }
+
+// model TaskStatus {
+//   id        Int     @id @default(autoincrement())
+//   name      String
+//   position  Int
+
+//   projectId Int
+//   project   Project @relation(fields:[projectId], references:[id])
+
+//   tasks     Task[]
+
+//   @@unique([projectId, name])
+// }
+
+// model Comment {
+//   id              Int                        @id @default(autoincrement())
+//   content         String
+
+//   taskId          Int
+//   task            Task                       @relation(fields:[taskId], references:[id])
+
+//   createdByUserId Int
+//   createdByUser   User                       @relation(fields:[createdByUserId], references:[id])
+
+//   createdAt       TimestamptzString          @default(now())
+//   updatedAt       temporal.updatedAtString()
+// }
+
+// model Label {
+//   id        Int                        @id @default(autoincrement())
+//   name      String
+
+//   projectId Int
+//   project   Project                    @relation(fields:[projectId], references:[id])
+
+//   tasks     TaskLabel[]
+
+//   createdAt TimestamptzString          @default(now())
+//   updatedAt temporal.updatedAtString()
+
+//   @@unique([projectId, name])
+// }
+
+// model TaskLabel {
+//   taskId  Int
+//   task    Task  @relation(fields:[taskId], references:[id])
+
+//   labelId Int
+//   label   Label @relation(fields:[labelId], references:[id])
+
+//   @@id([taskId, labelId])
+// }
+
+// model Attachment {
+//   id              Int                        @id @default(autoincrement())
+
+//   fileName        String
+//   fileUrl         String
+//   fileSize        Int
+//   mimeType        String
+
+//   taskId          Int
+//   task            Task                       @relation(fields:[taskId], references:[id])
+
+//   createdByUserId Int
+//   createdByUser   User                       @relation(fields:[createdByUserId], references:[id])
+
+//   createdAt       TimestamptzString          @default(now())
+//   updatedAt       temporal.updatedAtString()
+// }
+
+// model AuditLog {
+//   id              Int               @id @default(autoincrement())
+
+//   action          String
+//   entityType      String
+//   entityId        Int
+
+//   metadata        Json? // for storing the value's like oldValue, newValue
+
+//   projectId       Int
+//   project         Project           @relation(fields:[projectId], references:[id])
+
+//   createdByUserId Int
+//   createdByUser   User              @relation(fields:[createdByUserId], references:[id])
+
+//   createdAt       TimestamptzString @default(now())
+
+//   @@index([projectId, createdAt])
+//   @@index([createdByUserId, createdAt])
+// }
+
+// model Notification {
+//   id         Int                        @id @default(autoincrement())
+
+//   type       String
+//   message    String
+//   isRead     Boolean                    @default(false)
+
+//   entityType String
+//   entityId   Int
+
+//   metadata   Json?
+
+//   userId     Int
+//   user       User                       @relation(fields:[userId], references:[id])
+
+//   createdAt  TimestamptzString          @default(now())
+//   updatedAt  temporal.updatedAtString()
+
+//   @@index([userId, isRead, createdAt])
+// }
+
+
 model Organization {
   id          Int                        @id @default(autoincrement())
   name        String
@@ -35,11 +218,11 @@ model OrganizationMember {
   userId         Int
   organizationId Int
 
-  user           User         @relation(fields:[userId], references:[id])
-  organization   Organization @relation(fields:[organizationId], references:[id])
+  user           User         @relation(fields:[userId], references:[id], onDelete: Cascade)
+  organization   Organization @relation(fields:[organizationId], references:[id], onDelete: Cascade)
   role           String       @default("Member")
 
-  @@unique([userId, organizationId]) // The pair should be unique means a user can't be repeat in same organization
+  @@unique([userId, organizationId])
   @@map("organization_member")
 }
 
@@ -55,7 +238,7 @@ model Project {
   auditLogs       AuditLog[]
 
   createdByUser   User                       @relation(fields:[createdByUserId], references:[id])
-  organization    Organization               @relation(fields:[organizationId], references:[id])
+  organization    Organization               @relation(fields:[organizationId], references:[id], onDelete: Cascade)
 
   createdAt       TimestamptzString          @default(now())
   updatedAt       temporal.updatedAtString()
@@ -74,13 +257,13 @@ model Task {
   attachments      Attachment[]
 
   projectId        Int
-  project          Project                    @relation(fields:[projectId], references:[id])
+  project          Project                    @relation(fields:[projectId], references:[id], onDelete: Cascade)
 
   createdByUserId  Int
   createdByUser    User                       @relation("TaskCreator", fields:[createdByUserId], references:[id])
 
   assignedToUserId Int?
-  assignedToUser   User?                      @relation("TaskAssignee", fields:[assignedToUserId], references:[id])
+  assignedToUser   User?                      @relation("TaskAssignee", fields:[assignedToUserId], references:[id], onDelete: SetNull)
 
   statusId         Int
   status           TaskStatus                 @relation(fields:[statusId], references:[id])
@@ -95,7 +278,7 @@ model TaskStatus {
   position  Int
 
   projectId Int
-  project   Project @relation(fields:[projectId], references:[id])
+  project   Project @relation(fields:[projectId], references:[id], onDelete: Cascade)
 
   tasks     Task[]
 
@@ -107,7 +290,7 @@ model Comment {
   content         String
 
   taskId          Int
-  task            Task                       @relation(fields:[taskId], references:[id])
+  task            Task                       @relation(fields:[taskId], references:[id], onDelete: Cascade)
 
   createdByUserId Int
   createdByUser   User                       @relation(fields:[createdByUserId], references:[id])
@@ -121,7 +304,7 @@ model Label {
   name      String
 
   projectId Int
-  project   Project                    @relation(fields:[projectId], references:[id])
+  project   Project                    @relation(fields:[projectId], references:[id], onDelete: Cascade)
 
   tasks     TaskLabel[]
 
@@ -133,10 +316,10 @@ model Label {
 
 model TaskLabel {
   taskId  Int
-  task    Task  @relation(fields:[taskId], references:[id])
+  task    Task  @relation(fields:[taskId], references:[id], onDelete: Cascade)
 
   labelId Int
-  label   Label @relation(fields:[labelId], references:[id])
+  label   Label @relation(fields:[labelId], references:[id], onDelete: Cascade)
 
   @@id([taskId, labelId])
 }
@@ -150,7 +333,7 @@ model Attachment {
   mimeType        String
 
   taskId          Int
-  task            Task                       @relation(fields:[taskId], references:[id])
+  task            Task                       @relation(fields:[taskId], references:[id], onDelete: Cascade)
 
   createdByUserId Int
   createdByUser   User                       @relation(fields:[createdByUserId], references:[id])
@@ -166,10 +349,10 @@ model AuditLog {
   entityType      String
   entityId        Int
 
-  metadata        Json? // for storing the value's like oldValue, newValue
+  metadata        Json?
 
   projectId       Int
-  project         Project           @relation(fields:[projectId], references:[id])
+  project         Project           @relation(fields:[projectId], references:[id], onDelete: Cascade)
 
   createdByUserId Int
   createdByUser   User              @relation(fields:[createdByUserId], references:[id])

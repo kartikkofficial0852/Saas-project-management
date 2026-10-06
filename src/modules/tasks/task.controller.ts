@@ -1,6 +1,7 @@
 import type { RequestHandler } from "express";
 import taskService from "./task.services";
 import sendResponse from "../../utils/response";
+import { getTasksQuerySchema } from "./task.validator";
 
 const taskController = {
     create: (async (req, res) => {
@@ -38,18 +39,19 @@ const taskController = {
         const organizationId = Number(req.params.organizationId);
         const projectId = Number(req.params.projectId);
 
+        const query = getTasksQuerySchema.parse(req.query);
+
         const tasks = await taskService.getAll(
             organizationId,
-            projectId
+            projectId,
+            query
         );
 
         sendResponse({
             res,
             statusCode: 200,
             message: "Tasks fetched successfully",
-            data: {
-                tasks
-            },
+            data: tasks,
         });
     }) as RequestHandler,
 

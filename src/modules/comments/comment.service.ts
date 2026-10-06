@@ -1,5 +1,6 @@
 import AppError from "../../errors/app-error.js";
 import { db } from "../../prisma/db.js";
+import { getIO } from "../../socket/socket.js";
 
 const commentService = {
     async create(
@@ -31,7 +32,7 @@ const commentService = {
             throw new AppError("Task not found", 404);
         }
 
-        return await db.transaction(async (tx) => {
+        const comment = await db.transaction(async (tx) => {
             const comment =
                 await tx.orm.public.Comment.create({
                     content,
@@ -52,6 +53,16 @@ const commentService = {
 
             return comment;
         });
+
+        const io = getIO();
+
+        io.to(
+            `organization:${organizationId}:project:${projectId}`
+        ).emit("comment.created", {
+            comment,
+        });
+
+        return comment;
     },
 
     async getAll(
@@ -138,7 +149,7 @@ const commentService = {
             );
         }
 
-        return await db.transaction(async (tx) => {
+        const updatedComment = await db.transaction(async (tx) => {
             const updatedComment =
                 await tx.orm.public.Comment.where({ id: commentId }).update({
                     content,
@@ -157,6 +168,16 @@ const commentService = {
 
             return updatedComment;
         });
+
+        const io = getIO();
+
+        io.to(
+            `organization:${organizationId}:project:${projectId}`
+        ).emit("comment.updated", {
+            comment: updatedComment,
+        });
+
+        return updatedComment;
     },
 
     async delete(
@@ -206,7 +227,7 @@ const commentService = {
             );
         }
 
-        return await db.transaction(async (tx) => {
+        await db.transaction(async (tx) => {
             await tx.orm.public.Comment.where({ id: commentId }).delete();
 
             await tx.orm.public.AuditLog.create({
@@ -219,6 +240,15 @@ const commentService = {
                 projectId,
                 createdByUserId: userId,
             });
+        });
+
+        const io = getIO();
+
+        io.to(
+            `organization:${organizationId}:project:${projectId}`
+        ).emit("comment.deleted", {
+            commentId,
+            taskId,
         });
     },
 };

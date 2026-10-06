@@ -1,6 +1,11 @@
 import { JsonValue } from "@prisma/orm-postgres/contract";
 import AppError from "../../errors/app-error.js";
 import { db } from "../../prisma/db.js";
+import cacheService from "../../services/cache.service.js";
+import { NotificationModel } from "../../types/models.js";
+
+
+const getNotificationsCacheKey = (userId: number) => `user:${userId}:notifications`;
 
 const notificationService = {
     async create(
@@ -11,7 +16,7 @@ const notificationService = {
         userId: number,
         metadata?: JsonValue
     ) {
-        return await db.orm.public.Notification.create({
+        const notification = await db.orm.public.Notification.create({
             type,
             message,
             entityType,
@@ -19,11 +24,33 @@ const notificationService = {
             userId,
             metadata,
         });
+
+        await cacheService.delete(
+            getNotificationsCacheKey(userId)
+        );
+
+        return notification;
     },
     async getAll(userId: number) {
-        return await db.orm.public.Notification
+
+        const cacheKey = getNotificationsCacheKey(userId);
+        const cachedNotifications = await cacheService.get<NotificationModel[]>(cacheKey);
+
+        if (cachedNotifications) {
+            return cachedNotifications;
+        }
+
+        const notifications = await db.orm.public.Notification
             .where({ userId })
             .all();
+
+        await cacheService.set(
+            cacheKey,
+            notifications,
+            60 * 5 // Cache for 5 minutes
+        );
+
+        return notifications;
     },
 
     async markAsRead(
@@ -44,9 +71,15 @@ const notificationService = {
             );
         }
 
-        return await db.orm.public.Notification.where({ id: notificationId }).update({
+        const updatedNotification = await db.orm.public.Notification.where({ id: notificationId }).update({
             isRead: true,
         });
+
+        await cacheService.delete(
+            getNotificationsCacheKey(userId)
+        );
+
+        return updatedNotification;
     },
 
     async markAllAsRead(userId: number) {
@@ -62,6 +95,10 @@ const notificationService = {
                 isRead: true,
             });
         }
+
+        await cacheService.delete(
+            getNotificationsCacheKey(userId)
+        );
     },
 
     async delete(
@@ -83,6 +120,10 @@ const notificationService = {
         }
 
         await db.orm.public.Notification.where({ id: notificationId }).delete();
+
+        await cacheService.delete(
+            getNotificationsCacheKey(userId)
+        );
     },
 };
 

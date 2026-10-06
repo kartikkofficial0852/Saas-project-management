@@ -1,5 +1,7 @@
 import AppError from "../../errors/app-error.js";
 import { db } from "../../prisma/db.js";
+import cacheService from '../../services/cache.service.js'
+import { ProjectModel } from "../../types/models.js";
 
 const projectService = {
     async create(
@@ -8,7 +10,7 @@ const projectService = {
         organizationId: number,
         userId: number
     ) {
-        return await db.transaction(async (tx) => {
+        const project = await db.transaction(async (tx) => {
             const project =
                 await tx.orm.public.Project.create({
                     name,
@@ -50,14 +52,37 @@ const projectService = {
 
             return project;
         });
+
+        await cacheService.delete(
+            `organization:${organizationId}:projects`
+        );
+
+        await cacheService.delete(
+            `organization:${organizationId}:dashboard`
+        );
+
+        return project;
     },
 
     async getAll(organizationId: number) {
-        return await db.orm.public.Project
+        const cacheKey =
+            `organization:${organizationId}:projects`;
+
+        const cachedProjects = await cacheService.get<ProjectModel[]>(cacheKey);
+
+        if (cachedProjects) {
+            return cachedProjects;
+        }
+
+        const projects = await db.orm.public.Project
             .where({
                 organizationId,
             })
             .all();
+
+        await cacheService.set(cacheKey, projects, 60 * 5); // Cache for 5 minutes
+
+        return projects;
     },
 
     async getById(
@@ -106,7 +131,7 @@ const projectService = {
             );
         }
 
-        return await db.transaction(async (tx) => {
+        const updatedProject = await db.transaction(async (tx) => {
             const updatedProject =
                 await tx.orm.public.Project.where({ id: project.id }).update(
                     data
@@ -126,7 +151,17 @@ const projectService = {
             });
 
             return updatedProject;
-        })
+        });
+
+        await cacheService.delete(
+            `organization:${organizationId}:projects`
+        );
+
+        await cacheService.delete(
+            `organization:${organizationId}:dashboard`
+        );
+
+        return updatedProject;
 
     },
 
@@ -150,6 +185,14 @@ const projectService = {
         }
 
         await db.orm.public.Project.where({ id: project.id }).delete();
+
+        await cacheService.delete(
+            `organization:${organizationId}:projects`
+        );
+
+        await cacheService.delete(
+            `organization:${organizationId}:dashboard`
+        );
     }
 };
 

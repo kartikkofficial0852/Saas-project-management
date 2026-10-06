@@ -4,7 +4,8 @@ import organizationMiddleware from "../../middleware/organization.middleware.js"
 import validationMiddleware from "../../middleware/validation.middleware.js";
 import asyncHandler from "../../utils/async-handler.js";
 import taskController from "./task.controller.js";
-import { createTaskSchema, updateTaskAssigneeSchema, updateTaskSchema, updateTaskStatusSchema } from "./task.validator.js";
+import { createTaskSchema, getTasksQuerySchema, updateTaskAssigneeSchema, updateTaskSchema, updateTaskStatusSchema } from "./task.validator.js";
+import queryValidationMiddleware from "../../middleware/query-validation.middleware.js";
 
 const router = Router();
 
@@ -20,6 +21,7 @@ router.get(
     "/:organizationId/projects/:projectId/tasks",
     authMiddleware,
     organizationMiddleware,
+    queryValidationMiddleware(getTasksQuerySchema),
     asyncHandler(taskController.getAll)
 );
 

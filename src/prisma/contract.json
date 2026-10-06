@@ -1597,6 +1597,7 @@
               },
               "foreignKeys": [
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "taskId"
@@ -1707,6 +1708,7 @@
               },
               "foreignKeys": [
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "projectId"
@@ -1825,6 +1827,7 @@
               },
               "foreignKeys": [
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "taskId"
@@ -1920,6 +1923,7 @@
               },
               "foreignKeys": [
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "projectId"
@@ -2143,6 +2147,7 @@
               },
               "foreignKeys": [
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "userId"
@@ -2159,6 +2164,7 @@
                   }
                 },
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "organizationId"
@@ -2271,6 +2277,7 @@
                   }
                 },
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "organizationId"
@@ -2370,6 +2377,7 @@
               },
               "foreignKeys": [
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "projectId"
@@ -2402,6 +2410,7 @@
                   }
                 },
                 {
+                  "onDelete": "setNull",
                   "source": {
                     "columns": [
                       "assignedToUserId"
@@ -2490,6 +2499,7 @@
               },
               "foreignKeys": [
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "taskId"
@@ -2506,6 +2516,7 @@
                   }
                 },
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "labelId"
@@ -2577,6 +2588,7 @@
               },
               "foreignKeys": [
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "projectId"
@@ -2679,7 +2691,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "911211d5fb987cd641c9fb81dd0500166f64478a24c3ab44dd817a9fb9306c45"
+    "storageHash": "0aaa252cadc74192cfc041d88a227a5d94ea2bc34515397ad7a7b19d1ed6a7fd"
   },
   "execution": {
     "executionHash": "3dab21a32101d0650d19c99fc52d3ab0920bf8c3ace7a2f5289eb50c5b511d91",

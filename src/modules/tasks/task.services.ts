@@ -1,5 +1,14 @@
 import AppError from "../../errors/app-error.js";
 import { db } from "../../prisma/db.js";
+import cacheService from "../../services/cache.service.js";
+import { getIO } from "../../socket/socket.js";
+import { TaskModel } from "../../types/models.js";
+
+const getTasksCacheKey = (
+    organizationId: number,
+    projectId: number
+) =>
+    `organization:${organizationId}:project:${projectId}:tasks`;
 
 const taskService = {
     async create(
@@ -60,9 +69,7 @@ const taskService = {
         }
 
         // Create task
-
-
-        return await db.transaction(async (tx) => {
+        const result = await db.transaction(async (tx) => {
             const task = await tx.orm.public.Task.create({
                 title,
                 description,
@@ -80,11 +87,12 @@ const taskService = {
                 createdByUserId: userId,
             });
 
+            let notification = null;
             if (
                 assignedToUserId &&
                 assignedToUserId !== userId
             ) {
-                await tx.orm.public.Notification.create({
+                notification = await tx.orm.public.Notification.create({
                     type: "TASK_ASSIGNED",
                     message: `You have been assigned a task: ${task.title}`,
                     entityType: "TASK",
@@ -93,13 +101,48 @@ const taskService = {
                 });
             }
 
-            return task;
+
+            return {
+                task,
+                notification
+            };
         });
+
+        const io = getIO();
+
+        io.to(`organization:${organizationId}:project:${projectId}`
+        ).emit("task_created", {
+            task: result!.task,
+        });
+
+        if (result.notification) {
+            io.to(`user:${result.notification.userId}`).emit("notification.created", {
+                notification: result.notification,
+            });
+        }
+
+
+        await cacheService.delete(
+            getTasksCacheKey(organizationId, projectId)
+        );
+
+        await cacheService.delete(
+            `organization:${organizationId}:dashboard`
+        );
+
+        return result.task;
     },
 
     async getAll(
         organizationId: number,
-        projectId: number
+        projectId: number,
+        filters: {
+            search?: string;
+            statusId?: number;
+            assignedToUserId?: number;
+            page: number;
+            limit: number;
+        }
     ) {
         const project = await db.orm.public.Project
             .where({
@@ -112,9 +155,94 @@ const taskService = {
             throw new AppError("Project not found", 404);
         }
 
-        return await db.orm.public.Task
-            .where({ projectId })
+        const shouldCache =
+            !filters.search &&
+            filters.statusId === undefined &&
+            filters.assignedToUserId === undefined;
+
+        const cacheKey = getTasksCacheKey(
+            organizationId,
+            projectId
+        );
+
+        if (shouldCache) {
+            const cachedTasks =
+                await cacheService.get<{
+                    tasks: TaskModel[];
+                    pagination: {
+                        page: number;
+                        limit: number;
+                        total: number;
+                        totalPages: number;
+                    };
+                }>(cacheKey);
+
+            if (cachedTasks) {
+                return cachedTasks;
+            }
+        }
+
+        let query = db.orm.public.Task.where({
+            projectId,
+        });
+
+        if (filters.statusId !== undefined) {
+            query = query.where((task) =>
+                task.statusId.eq(filters.statusId!)
+            );
+        }
+
+        if (filters.assignedToUserId !== undefined) {
+            query = query.where((task) =>
+                task.assignedToUserId.eq(
+                    filters.assignedToUserId!
+                )
+            );
+        }
+
+        if (filters.search) {
+            query = query.where((task) =>
+                task.title.like(`%${filters.search!}%`)
+            );
+        }
+
+        const total =
+            await query.aggregate((a) => ({
+                total: a.count(),
+            }));
+
+        const offset =
+            (filters.page - 1) * filters.limit;
+
+        const tasks = await query
+            .orderBy((task) =>
+                task.createdAt.desc()
+            )
+            .offset(offset)
+            .limit(filters.limit)
             .all();
+
+        const result = {
+            tasks,
+            pagination: {
+                page: filters.page,
+                limit: filters.limit,
+                total: total.total,
+                totalPages: Math.ceil(
+                    total.total / filters.limit
+                ),
+            },
+        };
+
+        if (shouldCache) {
+            await cacheService.set(
+                cacheKey,
+                result,
+                300
+            );
+        }
+
+        return result;
     },
 
     async getOne(
@@ -211,7 +339,7 @@ const taskService = {
             }
         }
 
-        return await db.orm.public.Task.where({ id: taskId }).update({
+        const updatedTask = await db.orm.public.Task.where({ id: taskId }).update({
             ...(title !== undefined && { title }),
             ...(description !== undefined && { description }),
             ...(statusId !== undefined && { statusId }),
@@ -219,6 +347,23 @@ const taskService = {
                 assignedToUserId,
             }),
         });
+
+        const io = getIO();
+
+        io.to(`organization:${organizationId}:project:${projectId}`
+        ).emit("task_updated", {
+            task: updatedTask,
+        });
+
+        await cacheService.delete(
+            getTasksCacheKey(organizationId, projectId)
+        );
+
+        await cacheService.delete(
+            `organization:${organizationId}:dashboard`
+        );
+
+        return updatedTask;
     },
     async delete(
         taskId: number,
@@ -248,6 +393,22 @@ const taskService = {
         }
 
         await db.orm.public.Task.where({ id: taskId }).delete();
+
+        const io = getIO();
+
+        io.to(`organization:${organizationId}:project:${projectId}`
+        ).emit("task_deleted", {
+            id: taskId,
+        });
+
+
+        await cacheService.delete(
+            getTasksCacheKey(organizationId, projectId)
+        );
+
+        await cacheService.delete(
+            `organization:${organizationId}:dashboard`
+        );
     },
 
     async updateAssignee(
@@ -296,7 +457,7 @@ const taskService = {
             }
         }
 
-        return await db.transaction(async (tx) => {
+        const result = await db.transaction(async (tx) => {
             const updatedTask =
                 await tx.orm.public.Task.where({ id: taskId }).update({
                     assignedToUserId,
@@ -316,12 +477,13 @@ const taskService = {
                 createdByUserId: userId,
             });
 
+            let notification = null;
             if (
                 assignedToUserId &&
                 assignedToUserId !== userId &&
                 assignedToUserId !== task.assignedToUserId
             ) {
-                await tx.orm.public.Notification.create({
+                notification = await tx.orm.public.Notification.create({
                     type: "TASK_ASSIGNED",
                     message: `You have been assigned a task: ${task.title}`,
                     entityType: "TASK",
@@ -333,8 +495,30 @@ const taskService = {
                 });
             }
 
-            return updatedTask;
+            return {
+                task: updatedTask,
+                notification
+            };
         });
+
+        const io = getIO();
+
+        io.to(`organization:${organizationId}:project:${projectId}`
+        ).emit("task.assigned", {
+            task: result.task,
+        });
+
+        if (result.notification) {
+            io.to(`user:${result.notification.userId}`).emit("notification.created", {
+                notification: result.notification,
+            });
+        }
+
+        await cacheService.delete(
+            `organization:${organizationId}:dashboard`
+        );
+
+        return result.task;
     },
 
 
@@ -388,7 +572,7 @@ const taskService = {
             );
         }
 
-        return await db.transaction(async (tx) => {
+        const updatedTask = await db.transaction(async (tx) => {
             const updatedTask =
                 await tx.orm.public.Task.where({ id: taskId }).update({
                     statusId,
@@ -408,6 +592,19 @@ const taskService = {
 
             return updatedTask;
         });
+
+        const io = getIO();
+
+        io.to(`organization:${organizationId}:project:${projectId}`
+        ).emit("task.status_changed", {
+            task: updatedTask,
+        });
+
+        await cacheService.delete(
+            `organization:${organizationId}:dashboard`
+        );
+
+        return updatedTask;
     },
 };
 
