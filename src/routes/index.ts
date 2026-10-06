@@ -11,6 +11,7 @@ import notificationRoutes from "../modules/notifications/notification.routes.js"
 import taskStatusRoutes from "../modules/task-statuses/task-status.routes.js";
 import searchRoutes from "../modules/search/search.routes.js";
 import dashboardRoutes from "../modules/dashboard/dashboard.routes.js";
+import aiRoutes from "../modules/ai/ai.routes.js";
 const router = Router();
 
 router.use('/auth', authRoutes)
@@ -24,6 +25,7 @@ router.use("/organizations", logRoutes);
 router.use("/organizations", taskStatusRoutes);
 router.use("/organizations", searchRoutes);
 router.use("/organizations", dashboardRoutes);
+router.use("/ai", aiRoutes);
 router.use("/notifications", notificationRoutes);
 
 
