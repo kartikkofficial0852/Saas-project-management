@@ -5,6 +5,8 @@ import { createServer } from "node:http";
 import socketAuthMiddleware from "./socket/socket.middleware.js";
 import socketHandlers from "./socket/socket.handler.js";
 import { initializeSocket } from "./socket/socket.js";
+import { connectQueue } from "./queue/connection.js";
+import { startConsumers } from "./queue/consumer.js";
 
 const PORT = 3000;
 
@@ -31,6 +33,9 @@ io.on("connection", (socket) => {
         console.log(`Socket disconnected: ${socket.id}`);
     });
 });
+
+await connectQueue(); // start the connection to RabbitMQ
+await startConsumers(); // start the consumer to listen for messages from RabbitMQ
 
 httpServer.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

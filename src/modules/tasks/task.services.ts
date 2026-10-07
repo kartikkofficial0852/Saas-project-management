@@ -1,5 +1,7 @@
 import AppError from "../../errors/app-error.js";
 import { db } from "../../prisma/db.js";
+import { QUEUE_EVENTS } from "../../queue/events.js";
+import { publishEvent } from "../../queue/publisher.js";
 import cacheService from "../../services/cache.service.js";
 import { getIO } from "../../socket/socket.js";
 import { TaskModel } from "../../types/models.js";
@@ -69,7 +71,7 @@ const taskService = {
         }
 
         // Create task
-        const result = await db.transaction(async (tx) => {
+        const task = await db.transaction(async (tx) => {
             const task = await tx.orm.public.Task.create({
                 title,
                 description,
@@ -87,40 +89,30 @@ const taskService = {
                 createdByUserId: userId,
             });
 
-            let notification = null;
-            if (
-                assignedToUserId &&
-                assignedToUserId !== userId
-            ) {
-                notification = await tx.orm.public.Notification.create({
-                    type: "TASK_ASSIGNED",
-                    message: `You have been assigned a task: ${task.title}`,
-                    entityType: "TASK",
-                    entityId: task.id,
-                    userId: assignedToUserId,
-                });
-            }
-
-
-            return {
-                task,
-                notification
-            };
+            return task;
         });
+
+        if (
+            assignedToUserId &&
+            assignedToUserId !== userId
+        ) {
+            publishEvent(
+                QUEUE_EVENTS.TASK_ASSIGNED,
+                {
+                    taskId: task.id,
+                    taskTitle: task.title,
+                    assignedToUserId,
+                    assignedByUserId: userId,
+                }
+            );
+        }
 
         const io = getIO();
 
         io.to(`organization:${organizationId}:project:${projectId}`
         ).emit("task_created", {
-            task: result!.task,
+            task,
         });
-
-        if (result.notification) {
-            io.to(`user:${result.notification.userId}`).emit("notification.created", {
-                notification: result.notification,
-            });
-        }
-
 
         await cacheService.delete(
             getTasksCacheKey(organizationId, projectId)
@@ -130,7 +122,7 @@ const taskService = {
             `organization:${organizationId}:dashboard`
         );
 
-        return result.task;
+        return task;
     },
 
     async getAll(
@@ -457,7 +449,7 @@ const taskService = {
             }
         }
 
-        const result = await db.transaction(async (tx) => {
+        const updatedTask = await db.transaction(async (tx) => {
             const updatedTask =
                 await tx.orm.public.Task.where({ id: taskId }).update({
                     assignedToUserId,
@@ -477,48 +469,37 @@ const taskService = {
                 createdByUserId: userId,
             });
 
-            let notification = null;
-            if (
-                assignedToUserId &&
-                assignedToUserId !== userId &&
-                assignedToUserId !== task.assignedToUserId
-            ) {
-                notification = await tx.orm.public.Notification.create({
-                    type: "TASK_ASSIGNED",
-                    message: `You have been assigned a task: ${task.title}`,
-                    entityType: "TASK",
-                    entityId: taskId,
-                    userId: assignedToUserId,
-                    metadata: {
-                        assignedByUserId: userId,
-                    },
-                });
-            }
-
-            return {
-                task: updatedTask,
-                notification
-            };
+            return updatedTask;
         });
+
+        if (
+            assignedToUserId &&
+            assignedToUserId !== userId &&
+            assignedToUserId !== task.assignedToUserId
+        ) {
+            publishEvent(
+                QUEUE_EVENTS.TASK_ASSIGNED,
+                {
+                    taskId: updatedTask!.id,
+                    taskTitle: updatedTask!.title,
+                    assignedToUserId,
+                    assignedByUserId: userId,
+                }
+            );
+        }
 
         const io = getIO();
 
         io.to(`organization:${organizationId}:project:${projectId}`
         ).emit("task.assigned", {
-            task: result.task,
+            task: updatedTask,
         });
-
-        if (result.notification) {
-            io.to(`user:${result.notification.userId}`).emit("notification.created", {
-                notification: result.notification,
-            });
-        }
 
         await cacheService.delete(
             `organization:${organizationId}:dashboard`
         );
 
-        return result.task;
+        return updatedTask;
     },
 
 

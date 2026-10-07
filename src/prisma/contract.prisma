@@ -200,8 +200,6 @@ model User {
 
 //   @@index([userId, isRead, createdAt])
 // }
-
-
 model Organization {
   id          Int                        @id @default(autoincrement())
   name        String
@@ -218,7 +216,7 @@ model OrganizationMember {
   userId         Int
   organizationId Int
 
-  user           User         @relation(fields:[userId], references:[id], onDelete: Cascade)
+  user           User         @relation(fields:[userId], references:[id])
   organization   Organization @relation(fields:[organizationId], references:[id], onDelete: Cascade)
   role           String       @default("Member")
 
@@ -382,4 +380,11 @@ model Notification {
   updatedAt  temporal.updatedAtString()
 
   @@index([userId, isRead, createdAt])
+}
+
+model ProcessedEvent {
+  id          Int      @id @default(autoincrement())
+  eventId     String   @unique
+  eventType   String
+  processedAt DateTime @default(now())
 }
