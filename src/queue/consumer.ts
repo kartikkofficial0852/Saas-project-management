@@ -1,7 +1,6 @@
 import { getChannel } from "./connection.js";
 import { QUEUE_EVENTS } from "./events.js";
 import { getIO } from "../socket/socket.js";
-import notificationService from "../modules/notifications/notification.services.js";
 import { db } from "../prisma/db.js";
 
 type TaskAssignedEvent = {

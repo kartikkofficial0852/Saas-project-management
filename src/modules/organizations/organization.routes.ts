@@ -1,11 +1,11 @@
 import { Router } from "express";
-import authMiddleware from "../../middleware/auth.middleware";
-import asyncHandler from "../../utils/async-handler";
-import organizationController from "./organization.controller";
-import validationMiddleware from "../../middleware/validation.middleware";
-import { addMemberSchema, createOrganizationSchema, updateMemberRoleSchema } from "./organization.validator";
-import organizationMiddleware from "../../middleware/organization.middleware";
-import requireOrganizationRole from "../../middleware/role.middleware";
+import authMiddleware from "../../middleware/auth.middleware.js";
+import asyncHandler from "../../utils/async-handler.js";
+import organizationController from "./organization.controller.js";
+import validationMiddleware from "../../middleware/validation.middleware.js";
+import { addMemberSchema, createOrganizationSchema, updateMemberRoleSchema } from "./organization.validator.js";
+import organizationMiddleware from "../../middleware/organization.middleware.js";
+import requireOrganizationRole from "../../middleware/role.middleware.js";
 
 
 const router = Router();

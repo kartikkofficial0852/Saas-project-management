@@ -1,5 +1,5 @@
-import AppError from "../../errors/app-error";
-import { db } from "../../prisma/db"
+import AppError from "../../errors/app-error.js";
+import { db } from "../../prisma/db.js"
 
 
 const organizationService = {

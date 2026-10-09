@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { getChannel } from "./connection";
+import { getChannel } from "./connection.js";
 
 
 export const publishEvent = (event: string, data: any) => {

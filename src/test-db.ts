@@ -1,5 +1,4 @@
-import redis from "./config/redis.js";
-import { db } from "./prisma/db.js";
+
 import cacheService from "./services/cache.service.js";
 
 // ------------------------------------------  create User ----------------------------------

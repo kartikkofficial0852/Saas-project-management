@@ -1,9 +1,9 @@
 import { Router } from "express";
-import asyncHandler from "../../utils/async-handler";
-import authController from "./auth.controller";
-import validationMiddleware from "../../middleware/validation.middleware";
-import { loginSchema, registerSchema } from "./auth.validator";
-import authMiddleware from "../../middleware/auth.middleware";
+import asyncHandler from "../../utils/async-handler.js";
+import authController from "./auth.controller.js";
+import validationMiddleware from "../../middleware/validation.middleware.js";
+import { loginSchema, registerSchema } from "./auth.validator.js";
+import authMiddleware from "../../middleware/auth.middleware.js";
 
 
 const router = Router();

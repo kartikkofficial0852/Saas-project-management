@@ -1,8 +1,7 @@
 import bcrypt from "bcryptjs";
-import AppError from "../../errors/app-error";
-import { db } from "../../prisma/db"
-import sendResponse from "../../utils/response";
-import generateToken from "../../utils/jwt";
+import AppError from "../../errors/app-error.js";
+import { db } from "../../prisma/db.js";
+import generateToken from "../../utils/jwt.js";
 
 
 const authService = {

@@ -1,11 +1,11 @@
 import { Router } from "express";
-import authRoutes from "../modules/auth/auth.routes";
-import organizationRoutes from "../modules/organizations/organization.routes";
-import projectRoutes from "../modules/projects/project.routes";
-import taskRoutes from "../modules/tasks/task.routes";
+import authRoutes from "../modules/auth/auth.routes.js";
+import organizationRoutes from "../modules/organizations/organization.routes.js";
+import projectRoutes from "../modules/projects/project.routes.js";
+import taskRoutes from "../modules/tasks/task.routes.js";
 import commentRoutes from "../modules/comments/comment.routes.js";
 import labelRoutes from "../modules/labels/label.routes.js";
-import attachmentRoutes from "../modules/attachment/attachment.routes";
+import attachmentRoutes from "../modules/attachment/attachment.routes.js";
 import logRoutes from "../modules/logs/log.routes.js";
 import notificationRoutes from "../modules/notifications/notification.routes.js";
 import taskStatusRoutes from "../modules/task-statuses/task-status.routes.js";

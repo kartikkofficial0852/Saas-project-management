@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
-import taskService from "./task.services";
-import sendResponse from "../../utils/response";
-import { getTasksQuerySchema } from "./task.validator";
+import taskService from "./task.services.js";
+import sendResponse from "../../utils/response.js";
+import { getTasksQuerySchema } from "./task.validator.js";
 
 const taskController = {
     create: (async (req, res) => {

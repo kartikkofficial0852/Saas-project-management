@@ -1,5 +1,5 @@
-import { OrganizationMembership } from "./organization";
-import { User } from "./user";
+import { OrganizationMembership } from "./organization.js";
+import { User } from "./user.js";
 
 declare global {
     namespace Express {

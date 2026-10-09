@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import authService from "./auth.service";
-import sendResponse from "../../utils/response";
+import authService from "./auth.service.js";
+import sendResponse from "../../utils/response.js";
 
 
 const authController = {
@@ -21,7 +21,6 @@ const authController = {
 
     async login(req: Request, res: Response) {
         const { email, password } = req.body;
-        console.log(email, password);
 
         const result = await authService.login(email, password);
 

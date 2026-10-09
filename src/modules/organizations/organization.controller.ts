@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import organizationService from "./organization.service";
-import { User } from "../../types/user";
-import sendResponse from "../../utils/response";
+import organizationService from "./organization.service.js";
+import sendResponse from "../../utils/response.js";
 
 
 const organizationController = {

@@ -1,7 +1,6 @@
 import type { RequestHandler } from "express";
 import sendResponse from "../../utils/response.js";
 import dashboardService from "./dashboard.service.js";
-import cacheService from "../../services/cache.service.js";
 
 const dashboardController: {
     getDashboard: RequestHandler;

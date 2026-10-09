@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
-import AppError from "../errors/app-error";
+import AppError from "../errors/app-error.js";
 import jwt from "jsonwebtoken";
-import { db } from "../prisma/db";
+import { db } from "../prisma/db.js";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
