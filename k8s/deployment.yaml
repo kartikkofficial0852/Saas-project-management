@@ -1,0 +1,43 @@
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: saas-backend
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: saas-backend
+
+  template:
+    metadata:
+      labels:
+        app: saas-backend
+
+    spec:
+      containers:
+        - name: backend
+          image: saasprojectmanagement-backend
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: saas-backend-secrets
+                  key: OPENAI_API_KEY 
+            - name: REDIS_URL
+              value: "redis://redis:6379" 
+
+            - name: JWT_SECRET
+              value: "your-super-secret-key"
+            - name: JWT_EXPIRES_IN
+              value: "1d"
+            - name: RABBITMQ_URL
+              value: "amqp://rabbitmq:5672"  
+            - name: DATABASE_URL
+              value: "postgresql://postgres:Kartik%40123@host.docker.internal:5432/saas_project_management"   

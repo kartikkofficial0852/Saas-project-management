@@ -129,7 +129,26 @@ const organizationService = {
         }
 
         await db.orm.public.OrganizationMember.where({ id: membership.id }).delete();
-    }
+    },
+
+    async getMyOrganizations(userId: number) {
+        const memberships =
+            await db.orm.public.OrganizationMember
+                .where({ userId })
+                .include(
+                    "organization",
+                    (organization) =>
+                        organization.select("id", "name")
+                )
+                .select("role")
+                .all();
+
+        return memberships.map((membership) => ({
+            ...membership.organization,
+            role: membership.role,
+        }));
+    },
+
 }
 
 export default organizationService;

@@ -14,6 +14,9 @@ const registerSchema = z.object({
     password: z
         .string()
         .min(8, "Password must be at least 8 characters"),
+
+    organizationName: z.string().trim().min(2).max(100),
+
 });
 
 const loginSchema = z.object({

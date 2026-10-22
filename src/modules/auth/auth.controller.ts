@@ -4,20 +4,25 @@ import sendResponse from "../../utils/response.js";
 
 
 const authController = {
-    async register(req: Request, res: Response) {
-        const { name, email, password } = req.body;
 
-        const user = await authService.register(name, email, password);
+    async register(req: Request, res: Response) {
+        const { name, email, password, organizationName } = req.body;
+
+        const result = await authService.register(
+            name,
+            email,
+            password,
+            organizationName
+        );
 
         sendResponse({
             res,
             statusCode: 201,
-            message: "User registered successfully",
-            data: {
-                user
-            }
-        })
+            message: "User and organization registered successfully",
+            data: result,
+        });
     },
+
 
     async login(req: Request, res: Response) {
         const { email, password } = req.body;

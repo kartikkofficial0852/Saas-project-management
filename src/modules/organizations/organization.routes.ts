@@ -48,4 +48,11 @@ router.delete(
     requireOrganizationRole("OWNER"),
     asyncHandler(organizationController.removeMember)
 );
+
+router.get(
+    "/",
+    authMiddleware,
+    asyncHandler(organizationController.getMyOrganizations)
+);
+
 export default router;

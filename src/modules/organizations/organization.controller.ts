@@ -97,6 +97,23 @@ const organizationController = {
             message: "Member removed successfully",
         });
     },
+
+    async getMyOrganizations(req: Request, res: Response) {
+        const user = req.user!;
+
+        const organizations =
+            await organizationService.getMyOrganizations(user.id);
+
+        sendResponse({
+            res,
+            statusCode: 200,
+            message: "Organizations fetched successfully",
+            data: {
+                organizations,
+            },
+        });
+    },
+
 }
 
 export default organizationController;
